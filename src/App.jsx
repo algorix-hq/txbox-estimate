@@ -249,11 +249,9 @@ const QuoteCalculator = () => {
             <h3 className="text-lg font-medium mb-3">참고사항</h3>
             <textarea
               className="w-full h-32 border border-gray-300 rounded p-3 text-sm"
-              placeholder="담당자: 
-연락처: 
-이메일: 
-
-특이사항: "
+              placeholder="담당자: 권석일 부장
+연락처: 010-9007-9175
+이메일: imkorean@tinteccnc.com"
               value={memo}
               onChange={(e) => setMemo(e.target.value)}
             />

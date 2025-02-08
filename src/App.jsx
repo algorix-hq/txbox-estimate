@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calculator, Printer, Copy } from 'lucide-react';
+import { Printer, Copy, RotateCcw } from 'lucide-react';
 import tnboxLogo from './assets/images/tnbox-logo.png';
 
 const QuoteCalculator = () => {
@@ -53,8 +53,8 @@ const QuoteCalculator = () => {
     window.history.replaceState({}, '', newUrl);
 
     const basePrice = 40000;
-    const laserCount = Math.max(0, parseInt(laser) || 0);
-    const inkjetCount = Math.max(0, parseInt(inkjet) || 0);
+    const laserCount = Math.max(0, parseInt(laser || '0'));
+    const inkjetCount = Math.max(0, parseInt(inkjet || '0'));
     
     const deductFromLaser = Math.min(100, laserCount);
     const remainingMonitoring = Math.max(0, 100 - deductFromLaser);
@@ -66,7 +66,7 @@ const QuoteCalculator = () => {
     const inkjetCost = chargeableInkjet * 200;
     const laserCost = chargeableLaser * 300;
     
-    const excessContract = Math.max(0, parseInt(contract) - 300);
+    const excessContract = Math.max(0, parseInt(contract || '0') - 300);
     const contractCost = Math.floor(excessContract / 100) * 10000;
     
     const subtotal = basePrice + inkjetCost + laserCost + contractCost;
@@ -87,11 +87,20 @@ const QuoteCalculator = () => {
   }, [inkjet, laser, contract, memo]);
 
   const formatNumber = (num) => {
+    if (num === undefined || num === null || isNaN(num)) return '0';
     return new Intl.NumberFormat('ko-KR').format(num);
   };
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleReset = () => {
+    setInkjet('');
+    setLaser('');
+    setContract('');
+    setMemo('');
+    window.history.replaceState({}, '', window.location.pathname);
   };
 
   const currentDate = new Date().toLocaleDateString('ko-KR', {
@@ -108,7 +117,13 @@ const QuoteCalculator = () => {
           <h1 className="text-2xl font-bold text-gray-800">견적서</h1>
         </div>
         <div className="flex items-center gap-4">
-          <Calculator className="w-8 h-8 text-blue-500" />
+          <button 
+            onClick={handleReset}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-600 text-gray-600 rounded hover:bg-gray-50"
+          >
+            <RotateCcw className="w-4 h-4" />
+            <span>초기화</span>
+          </button>
           <button 
             onClick={() => {
               navigator.clipboard.writeText(window.location.href);
@@ -183,12 +198,12 @@ const QuoteCalculator = () => {
 
       <div className="grid grid-cols-2 gap-4 mb-6 text-sm text-gray-600">
         <div>
-          <p className="mb-1"><strong>총 프린터:</strong> {formatNumber((parseInt(inkjet) || 0) + (parseInt(laser) || 0))}대</p>
-          <p className="mb-1"><strong>잉크젯:</strong> {formatNumber(parseInt(inkjet) || 0)}대</p>
-          <p className="mb-1"><strong>레이저:</strong> {formatNumber(parseInt(laser) || 0)}대</p>
+          <p className="mb-1"><strong>총 프린터:</strong> {formatNumber(Math.max(0, parseInt(inkjet || '0') + parseInt(laser || '0')))}대</p>
+          <p className="mb-1"><strong>잉크젯:</strong> {formatNumber(Math.max(0, parseInt(inkjet || '0')))}대</p>
+          <p className="mb-1"><strong>레이저:</strong> {formatNumber(Math.max(0, parseInt(laser || '0')))}대</p>
         </div>
         <div>
-          <p className="mb-1"><strong>품목계약:</strong> {formatNumber(parseInt(contract) || 0)}대</p>
+          <p className="mb-1"><strong>품목계약:</strong> {formatNumber(Math.max(0, parseInt(contract || '0')))}대</p>
         </div>
       </div>
 
